@@ -1,39 +1,51 @@
-#simple maths game
+# simple maths game
 import random
 import time
-#Function to generate expressions
-def GEN_EX (NO_OP):
-    OPERANDS=[]
-    OPERATORS =[]
-    OPERATIONS = ['+','-','*','/']
-    EXPRESSION =[]
-    OPR_CNT = 0
-    OPRN_CNT=0
-    for i in range (0,NO_OP):
-        OPERANDS.append(random.randint(0,20))
-    for i in range (0,NO_OP-1):
-        OPERATORS.append((random.choice(OPERATIONS)))
-    for i in range (0,len(OPERATORS)+len(OPERANDS)):
+
+
+# Function to generate expressions
+from typing import List
+
+
+def generate_expression(no_of_operators):
+    operands = []
+    operators = []
+    operations = ['+', '-', '*', '/']
+    expression = []
+    operands_count = 0
+    operators_count = 0
+    for i in range(0, no_of_operators):
+        operands.append(random.randint(0, 20))
+    for i in range(0, no_of_operators - 1):
+        operators.append((random.choice(operations)))
+    for i in range(0, len(operators) + len(operands)):
         if i % 2 == 0:
-            EXPRESSION.append(OPERANDS[OPR_CNT])
-            OPR_CNT += 1
+            expression.append(operands[operands_count])
+            operands_count += 1
         else:
-            EXPRESSION.append(OPERATORS[OPRN_CNT])
-            OPRN_CNT += 1
-    EXPRESSION = ''.join(str(x) for x in EXPRESSION)
-    return EXPRESSION
-#Function to calculate the solution
-def RESULT (EXPRESSION):
-    return (int(eval(EXPRESSION)))
-#Function to evaluate if the answer is right
-def EVALUATE(P,Q):
-    if P == Q:
+            expression.append(operators[operators_count])
+            operators_count += 1
+    expression = ''.join(str(x) for x in expression)
+    return expression
+
+
+# Function to calculate the solution
+def result(expression):
+    return (int(eval(expression)))
+
+
+# Function to evaluate if the answer is right
+def evaluate(solution, user_solution):
+    if solution == user_solution:
         return True
     else:
         return False
+
+
+
 # Display Message
 
-print ("""Welcome to the maths game !!!
+print("""Welcome to the maths game !!!
 -----------------------------
 Test your basic arithematic skills by playing this simple game. With every 5 correct answers, the level increase
 increasing the difficulty of the questions.
@@ -47,34 +59,41 @@ Remember :
         5. The timer starts after the first answer is entered """)
 input("Are you ready ?? Press any key to begin ! ")
 
-
-
-
-#Variables on which the game operates
-SCORE = 0
-LEVEL = 1
-LIVES = 3
+# Variables on which the game operates
+score = 0
+level = 1
+lives = 3
 start = time.time()
-finish = time.time()+60 # for the timed mode, 60 seconds are needed
+finish_time = time.time() + 60  # for the timed mode, 60 seconds are needed
 
-#While loop to drive the game
-while(LIVES != 0 and time.time()<finish):
+# While loop to drive the game
+while (lives != 0 and time.time() < finish_time):
+    # Increase the level of difficulty every 5 questions.
+    if score != 0 and score % 5 == 0:
+        level = level + 1
+    print("LEVEL : ", level)
+    no_of_operands = level + 1
+    question_expression = generate_expression(no_of_operands)
+    print(question_expression, end='')
+    answer = int(input(" = "))
+    correct_answer = 0
 
-    if SCORE != 0 and SCORE % 5 == 0:
-        LEVEL = LEVEL + 1
-    print("LEVEL : ", LEVEL)
-    NO_OPERANDS = LEVEL + 1
-    REG_EX = GEN_EX(NO_OPERANDS)
-    print(REG_EX,end='')
-    ANSWER = int(input( " = " ))
+    # Checking for any divide by zero or numerical errors that may show up
+    try:
+        correct_answer = result(question_expression)
+    except:
+        print("OOPS ! I messed up ! Lets do it again !")
+        continue
 
-    if(EVALUATE(RESULT(REG_EX),ANSWER)):
-        print ("CORRECT ! ",end = '')
-        SCORE = SCORE + 1;
-        print("SCORE = ", SCORE, "LIVES = ", LIVES)
+    if (evaluate(correct_answer, answer)):
+        print("CORRECT ! ", end='')
+        score = score + 1
+        print("SCORE = ", score, "LIVES = ", lives)
     else:
-        print ("WRONG ! ",end='')
-        LIVES = LIVES - 1
-        print("SCORE = ", SCORE, "LIVES = ", LIVES)
-print ("GAME OVER !!!")
-print ("Maximum Level = ",LEVEL,"SCORE = ",SCORE)
+        print("WRONG ! ", end='')
+        lives = lives - 1
+        print("SCORE = ", score, "LIVES = ", lives)
+print("GAME OVER !!!")
+print("Maximum Level = ", level, "SCORE = ", score)
+
+
