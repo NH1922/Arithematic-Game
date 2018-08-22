@@ -67,7 +67,7 @@ start = time.time()
 finish_time = time.time() + 60  # for the timed mode, 60 seconds are needed
 
 # While loop to drive the game
-while (lives != 0 and time.time() < finish_time):
+while lives != 0 and time.time() < finish_time:
     # Increase the level of difficulty every 5 questions.
     if score != 0 and score % 5 == 0:
         level = level + 1
@@ -75,17 +75,16 @@ while (lives != 0 and time.time() < finish_time):
     no_of_operands = level + 1
     question_expression = generate_expression(no_of_operands)
     print(question_expression, end='')
-    answer = int(input(" = "))
-    correct_answer = 0
-
     # Checking for any divide by zero or numerical errors that may show up
+    correct_answer = 0
     try:
         correct_answer = result(question_expression)
     except:
         print("OOPS ! I messed up ! Lets do it again !")
         continue
+    answer = int(input(" = "))
 
-    if (evaluate(correct_answer, answer)):
+    if evaluate(correct_answer, answer):
         print("CORRECT ! ", end='')
         score = score + 1
         print("SCORE = ", score, "LIVES = ", lives)
